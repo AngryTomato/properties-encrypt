@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" th:href="@{/css/bootstrap.min.css}">
+    <title>properties encrypt</title>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="form-group m-2">
+        <textarea class="form-control" name="" id="rawData" cols="30" rows="10" style="resize: none;" placeholder="原始字符串"></textarea>
+    </div>
+    <div class="form-group m-2">
+        <div class="form-inline">
+            <button class="btn btn-primary" onclick="encrypt()">加密</button>
+            <button class="btn btn-success mx-2" onclick="decrypt()">解密</button>
+        </div>
+    </div>
+    <div class="form-group m-2">
+        <textarea class="form-control" name="" id="encryptedData" cols="30" rows="10" style="resize: none;" placeholder="加密字符串"></textarea>
+    </div>
+</div>
+<script th:inline="javascript">
+    let rawData = document.getElementById("rawData");
+    let encryptedData = document.getElementById("encryptedData");
+
+    function encrypt() {
+      let rawDataJson = {
+        "rawStr": rawData.value
+      };
+      const encryptUrl = /*[[@{/encrypt}]]*/;
+      fetch(encryptUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(rawDataJson)
+      }).then(function (response) {
+        return response.json();
+      }).then(function (encryptedJson) {
+        encryptedData.value = encryptedJson.result;
+      });
+    }
+
+    function decrypt() {
+      let encryptDataJson = {
+        "encryptedStr": encryptedData.value
+      };
+      const decryptUrl = /*[[@{/decrypt}]]*/;
+      fetch(decryptUrl, {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest'
+        },
+        body: JSON.stringify(encryptDataJson)
+      }).then(function (response) {
+        return response.json();
+      }).then(function (decryptedJson) {
+        rawData.value = decryptedJson.result;
+      });
+    }
+  </script>
+</body>
+
+</html>
